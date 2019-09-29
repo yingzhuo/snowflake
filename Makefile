@@ -46,8 +46,6 @@ proto: clean
 
 # 发布
 release: clean fmt proto
-	GOOS=windows GOARCH=amd64 go build -o $(CURDIR)/bin/snowflake-windows-amd64.exe github.com/yingzhuo/main
-	GOOS=darwin  GOARCH=amd64 go build -o $(CURDIR)/bin/snowflake-darwin-amd64      github.com/yingzhuo/main
 	GOOS=linux   GOARCH=amd64 go build -o $(CURDIR)/bin/snowflake-linux-amd64       github.com/yingzhuo/main
 	docker image build -t $(docker-image-tag) $(docker-build-context)
 
