@@ -12,7 +12,6 @@
 ### 客户端
 
 * [Java](.github/wiki/client-java.md)
-* [Golang](.github/wiki/client-golang.md)
 
 ### 参考
 

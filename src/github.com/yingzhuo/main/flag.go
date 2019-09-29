@@ -24,6 +24,6 @@ func init() {
 	cmd.IntVar(&flags.port, "port", 8080, "port of http service")
 	cmd.Int64Var(&flags.nodeId, "node-id", 512, "node id of snowflake (0 ~ 1023)")
 	cmd.BoolVar(&flags.version, "version", false, "print version")
-	cmd.StringVar(&flags.responseType, "response-type", "json", "content type of http response (json | protobuf)")
+	cmd.StringVar(&flags.responseType, "response-type", "protobuf", "content type of http response (json | protobuf)")
 	_ = cmd.Parse(os.Args[1:])
 }
