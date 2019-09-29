@@ -1,0 +1,10 @@
+syntax = "proto3";
+package snowflake;
+
+option go_package = "github.com/yingzhuo/protobuf";
+option java_package = "com.github.yingzhuo.snowflake.proto";
+option java_outer_classname = "SnowflakeProto";
+
+message IdList {
+    repeated int64 ids = 1;
+}

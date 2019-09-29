@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  snowflake:
+    image: quay.io/yingzhuo/snowflake:latest
+    container_name: "snowflake"
+    restart: "always"
+    ports:
+      - "8080:8080"
+    command:
+      - "/bin/snowflake"
+      - "--node-id=0"
