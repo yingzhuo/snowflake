@@ -12,6 +12,7 @@
 ### 客户端
 
 * [Java](https://github.com/yingzhuo/snowflake-java-client)
+* [Golang](https://github.com/yingzhuo/snowflakeclient)
 
 ### 参考
 
