@@ -1,12 +1,6 @@
 TIMESTAMP             	:= $(shell /bin/date "+%F %T")
 NAME					:= snowflake
 VERSION					:= 1.0.0
-LDFLAGS 				:= -s -w \
-           					-X 'main.BuildVersion=$(VERSION)' \
-           					-X 'main.BuildGitBranch=$(shell git describe --all)' \
-           					-X 'main.BuildGitRev=$(shell git rev-list --count HEAD)' \
-           					-X 'main.BuildGitCommit=$(shell git rev-parse HEAD)' \
-           					-X 'main.BuildDate=$(shell date -u -R)'
 usage:
 	@echo "------------------------------------------"
 	@echo " 目标           | 功能"
@@ -37,15 +31,15 @@ proto:
 
 build-linux: proto
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-		go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o bin/$(NAME)-linux-amd64-$(VERSION)
+		go build -o bin/$(NAME)-linux-amd64-$(VERSION)
 
 build-darwin: proto
 	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
-		go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o bin/$(NAME)-darwin-amd64-$(VERSION)
+		go build -o bin/$(NAME)-darwin-amd64-$(VERSION)
 
 build-windows: proto
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
-		go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o bin/$(NAME)-windows-amd64-$(VERSION).exe
+		go build  -o bin/$(NAME)-windows-amd64-$(VERSION).exe
 
 build-all: build-linux build-windows build-darwin
 
