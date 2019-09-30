@@ -47,6 +47,6 @@ $ curl -X'GET' "http://localhost:8080/id?n=1"
 --node-id       | 512            | 程序使用的NodeID (0 ~ 1023)
 --host          | 0.0.0.0        | 程序允许访问的IP地址
 --port          | 8080           | 程序监听的端口号
---response-type | json           | 程序response的数据格式 (json | protobuf)
+--response-type | protobuf       | 程序response的数据格式 (protobuf | json)
 
 **注意: 当部署`Snowflake`集群时需要为不同节点指定不同的`NodeID`防止生成的ID冲突。**
