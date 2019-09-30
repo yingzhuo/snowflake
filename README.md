@@ -11,7 +11,7 @@
 
 ### 客户端
 
-* [Java](.github/wiki/client-java.md)
+* [Java](https://github.com/yingzhuo/snowflake-java-client)
 
 ### 参考
 
