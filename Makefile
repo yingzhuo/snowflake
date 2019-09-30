@@ -8,7 +8,7 @@ usage:
 	@echo "------------------------------------------"
 	@echo " usage          | 显示本菜单"
 	@echo " fmt            | 格式化代码"
-	@echo " proto          | 编译protobuf文件"
+	@echo " protoc         | 编译protobuf文件"
 	@echo " build-linux    | 构建 (linux-amd64)"
 	@echo " build-darwin   | 构建 (darwin-amd64)"
 	@echo " build-windows  | 构建 (windows-amd64)"
@@ -27,22 +27,22 @@ clean:
 	@docker image rm quay.io/yingzhuo/$(NAME):$(VERSION) &> /dev/null || true
 	@docker image prune -f &> /dev/null || true
 
-proto:
+protoc:
 	protoc -I=$(CURDIR)/proto/ --go_out=$(CURDIR) $(CURDIR)/proto/snowflake.proto
 
-build-linux: proto
+build-linux: protoc
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-		go build -o bin/$(NAME)-linux-amd64-$(VERSION)
+		go build -o $(CURDIR)/bin/$(NAME)-linux-amd64-$(VERSION)
 
-build-darwin: proto
+build-darwin: protoc
 	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
-		go build -o bin/$(NAME)-darwin-amd64-$(VERSION)
+		go build -o $(CURDIR)/bin/$(NAME)-darwin-amd64-$(VERSION)
 
-build-windows: proto
+build-windows: protoc
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
-		go build  -o bin/$(NAME)-windows-amd64-$(VERSION).exe
+		go build  -o $(CURDIR)/bin/$(NAME)-windows-amd64-$(VERSION).exe
 
-build-all: build-linux build-windows build-darwin
+build-all: build-linux build-darwin build-windows
 
 release: build-linux
 	docker image build -t quay.io/yingzhuo/$(NAME):$(VERSION) --build-arg VERSION=$(VERSION) $(CURDIR)/bin
@@ -56,3 +56,5 @@ github: clean fmt
 	git add .
 	git commit -m "$(TIMESTAMP)"
 	git push
+
+.PHONY: usage fmt clean protoc build-linux build-darwin build-windows build-all release github
