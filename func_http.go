@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/bwmarrin/snowflake"
 	"github.com/golang/protobuf/proto"
-	"github.com/yingzhuo/protobuf"
 	"log"
 	"net/http"
 	"os"
@@ -72,7 +71,7 @@ func writeJson(w http.ResponseWriter, result []int64) {
 func writeProtobuf(w http.ResponseWriter, result []int64) {
 	w.Header().Set("Content-Type", "application/x-protobuf;charset=utf-8")
 
-	message := protobuf.IdList{
+	message := IdList{
 		Ids: []int64{},
 	}
 

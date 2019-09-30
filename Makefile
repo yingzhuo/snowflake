@@ -1,62 +1,63 @@
-# ----------------------------------------------------------------------------------------------------------------------
-#  作者: 应卓
-#  日期: 2019-09-16
-# ----------------------------------------------------------------------------------------------------------------------
-timestamp             = $(shell /bin/date "+%F %T")
-gofiles               = `find $(CURDIR) -name "*.go" -type f -not -path "$(CURDIR)/src/vendor/*"`
-packages              = `go list $(CURDIR)/... | grep -v /vendor/`
-docker-image-tag      = quay.io/yingzhuo/snowflake:latest
-docker-build-context  = $(CURDIR)/bin/
-
-# 菜单
+TIMESTAMP             	:= $(shell /bin/date "+%F %T")
+NAME					:= snowflake
+VERSION					:= 1.0.0
+LDFLAGS 				:= -s -w \
+           					-X 'main.BuildVersion=$(VERSION)' \
+           					-X 'main.BuildGitBranch=$(shell git describe --all)' \
+           					-X 'main.BuildGitRev=$(shell git rev-list --count HEAD)' \
+           					-X 'main.BuildGitCommit=$(shell git rev-parse HEAD)' \
+           					-X 'main.BuildDate=$(shell date -u -R)'
 usage:
 	@echo "------------------------------------------"
 	@echo " 目标           | 功能"
 	@echo "------------------------------------------"
 	@echo " usage          | 显示本菜单"
 	@echo " fmt            | 格式化代码"
-	@echo " list           | 列出所有包和文件"
 	@echo " proto          | 编译protobuf文件"
+	@echo " build-linux    | 构建 (linux-amd64)"
+	@echo " build-darwin   | 构建 (darwin-amd64)"
+	@echo " build-windows  | 构建 (windows-amd64)"
+	@echo " build-all      | 构建以上三者"
 	@echo " clean          | 清理构建产物"
 	@echo " release        | 发布"
 	@echo " github         | 将代码推送到Github"
 	@echo "------------------------------------------"
 
-# 列出所有包
-list:
-	@echo "packages: "
-	@echo $(packages)
-	@echo ""
-	@echo "go files: "
-	@echo $(gofiles)
-
-# 格式化代码
 fmt:
-	@gofmt -s -w $(gofiles)
+	@go fmt ./...
 
-# 清理
 clean:
-	@rm -rf $(CURDIR)/bin/snowflake-* &> /dev/null || true
-	@docker image rm $(docker-image-tag) &> /dev/null || true
+	@rm -rf $(CURDIR)/bin/snowflake-* &> /dev/null
+	@docker image rm quay.io/yingzhuo/$(NAME):latest &> /dev/null || true
+	@docker image rm quay.io/yingzhuo/$(NAME):$(VERSION) &> /dev/null || true
 	@docker image prune -f &> /dev/null || true
 
-# 编译protobuf
-proto: clean
-	protoc -I=$(CURDIR)/proto/ --go_out=$(CURDIR)/src/ $(CURDIR)/proto/snowflake.proto
+proto:
+	protoc -I=$(CURDIR)/proto/ --go_out=$(CURDIR) $(CURDIR)/proto/snowflake.proto
 
-# 发布
-release: clean fmt proto
-	GOOS=linux   GOARCH=amd64 go build -o $(CURDIR)/bin/snowflake-linux-amd64       github.com/yingzhuo/main
-	docker image build -t $(docker-image-tag) $(docker-build-context)
+build-linux: proto
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+		go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o bin/$(NAME)-linux-amd64-$(VERSION)
 
-	@cat $(CURDIR)/.github/quay.io.pwd | docker login --username=yingzhuo --password-stdin quay.io
-	docker image push $(docker-image-tag)
-	@docker logout quay.io &> /dev/null
+build-darwin: proto
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
+		go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o bin/$(NAME)-darwin-amd64-$(VERSION)
 
-# 推送源代码
+build-windows: proto
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
+		go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o bin/$(NAME)-windows-amd64-$(VERSION).exe
+
+build-all: build-linux build-windows build-darwin
+
+release: build-linux
+	docker image build -t quay.io/yingzhuo/$(NAME):$(VERSION) --build-arg VERSION=$(VERSION) $(CURDIR)/bin
+	docker login --username=yingzhuo --password="${QUAY_PASSWORD}" quay.io &> /dev/null
+	docker image push quay.io/yingzhuo/$(NAME):$(VERSION)
+	docker image tag  quay.io/yingzhuo/$(NAME):$(VERSION) quay.io/yingzhuo/$(NAME):latest
+	docker image push quay.io/yingzhuo/$(NAME):latest
+	docker logout quay.io &> /dev/null
+
 github: clean fmt
 	git add .
-	git commit -m "$(timestamp)"
+	git commit -m "$(TIMESTAMP)"
 	git push
-
-.PHONY: usage fmt list clean release github

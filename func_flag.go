@@ -2,21 +2,8 @@ package main
 
 import (
 	"flag"
-	"github.com/bwmarrin/snowflake"
 	"os"
 )
-
-var nodeInstance *snowflake.Node
-
-var flags = &Flags{}
-
-type Flags struct {
-	host         string
-	port         int
-	nodeId       int64
-	version      bool
-	responseType string
-}
 
 func init() {
 	cmd := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
