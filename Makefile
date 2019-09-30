@@ -1,6 +1,7 @@
 TIMESTAMP             	:= $(shell /bin/date "+%F %T")
 NAME					:= snowflake
 VERSION					:= 1.0.0
+
 usage:
 	@echo "------------------------------------------"
 	@echo " 目标           | 功能"
