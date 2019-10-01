@@ -31,16 +31,13 @@ protoc:
 	protoc -I=$(CURDIR)/proto/ --go_out=$(CURDIR) $(CURDIR)/proto/snowflake.proto
 
 build-linux: protoc
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-		go build -o $(CURDIR)/bin/$(NAME)-linux-amd64-$(VERSION)
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(CURDIR)/bin/$(NAME)-linux-amd64-$(VERSION)
 
 build-darwin: protoc
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
-		go build -o $(CURDIR)/bin/$(NAME)-darwin-amd64-$(VERSION)
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(CURDIR)/bin/$(NAME)-darwin-amd64-$(VERSION)
 
 build-windows: protoc
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
-		go build  -o $(CURDIR)/bin/$(NAME)-windows-amd64-$(VERSION).exe
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $(CURDIR)/bin/$(NAME)-windows-amd64-$(VERSION).exe
 
 build-all: build-linux build-darwin build-windows
 

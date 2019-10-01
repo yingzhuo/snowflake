@@ -6,4 +6,6 @@ ARG VERSION
 
 COPY ./snowflake-linux-amd64-$VERSION /bin/snowflake
 
+ENV SNOWFLAKE_VERSION=$VERSION
+
 CMD ["snowflake", "--host=0.0.0.0", "--port=8080", "--node-id=512", "--reponse-type=protobuf"]

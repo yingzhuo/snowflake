@@ -21,7 +21,14 @@ func startHttpServer() {
 	log.Printf("port           = %v", flags.port)
 	log.Printf("node-id        = %v", flags.nodeId)
 	log.Printf("reponse-type   = %v", flags.responseType)
+	if strings.EqualFold("json", flags.responseType) {
+		log.Printf("indent-json    = %v", flags.indentJson)
+	}
 	log.Printf("status         = Running")
+
+	if flags.dryRun {
+		return
+	}
 
 	nodeInstance, _ = snowflake.NewNode(flags.nodeId)
 
@@ -40,11 +47,11 @@ func startHttpServer() {
 
 		switch {
 		case strings.EqualFold(flags.responseType, "json"):
-			writeJson(w, result)
+			writeJson(w, result, flags.indentJson)
 		case strings.EqualFold(flags.responseType, "protobuf"):
 			writeProtobuf(w, result)
 		default:
-			writeJson(w, result) // default as json
+			writeJson(w, result, flags.indentJson) // default as json
 		}
 	})
 
@@ -57,10 +64,22 @@ func startHttpServer() {
 	}
 }
 
-func writeJson(w http.ResponseWriter, result []int64) {
+func writeJson(w http.ResponseWriter, result []int64, indent bool) {
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	data, _ := json.Marshal(result)
+
+	var data []byte
+	var err error
+
+	if indent {
+		if data, err = json.MarshalIndent(result, "", "  "); err != nil {
+			panic(err)
+		}
+	} else {
+		if data, err = json.Marshal(result); err != nil {
+			panic(err)
+		}
+	}
 
 	if _, err := fmt.Fprint(w, string(data)); err != nil {
 		_, _ = fmt.Fprint(w, "[]")
@@ -82,5 +101,4 @@ func writeProtobuf(w http.ResponseWriter, result []int64) {
 	if _, err := w.Write(data); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-
 }

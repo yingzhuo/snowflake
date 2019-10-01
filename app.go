@@ -12,6 +12,8 @@ type Flags struct {
 	nodeId       int64
 	version      bool
 	responseType string
+	indentJson   bool
+	dryRun       bool
 }
 
 func main() {
