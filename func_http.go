@@ -14,22 +14,6 @@ import (
 
 func startHttpServer() {
 
-	log.SetFlags(log.Ldate | log.Ltime | log.Llongfile)
-	log.SetPrefix("[SNOWFLAKE] ")
-	log.SetOutput(os.Stdout)
-	log.Printf("host           = %v", flags.host)
-	log.Printf("port           = %v", flags.port)
-	log.Printf("node-id        = %v", flags.nodeId)
-	log.Printf("reponse-type   = %v", flags.responseType)
-	if strings.EqualFold("json", flags.responseType) {
-		log.Printf("indent-json    = %v", flags.indentJson)
-	}
-	log.Printf("status         = Running")
-
-	if flags.dryRun {
-		return
-	}
-
 	nodeInstance, _ = snowflake.NewNode(flags.nodeId)
 
 	// path: "/id"
