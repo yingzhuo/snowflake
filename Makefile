@@ -19,7 +19,7 @@ usage:
 	@echo "------------------------------------------"
 
 fmt:
-	@go fmt ./...
+	@go fmt $(CURDIR)/...
 
 clean:
 	@rm -rf $(CURDIR)/bin/snowflake-* &> /dev/null
