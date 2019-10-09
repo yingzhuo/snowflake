@@ -8,6 +8,6 @@ services:
     ports:
       - "8080:8080"
     command:
-      - "snowflake"
+      - "docker-entrypoint"
       - "--node-id=0"
       - "--response-type=protobuf"
