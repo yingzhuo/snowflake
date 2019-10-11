@@ -27,7 +27,7 @@ func main() {
 	if flags.version {
 		printVersion()
 	} else {
-
+		logrus.Infof("pid            = %v", os.Getpid())
 		logrus.Infof("host           = %v", flags.host)
 		logrus.Infof("port           = %v", flags.port)
 		logrus.Infof("node-id        = %v", flags.nodeId)
