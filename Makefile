@@ -23,8 +23,8 @@ fmt:
 
 clean:
 	@rm -rf $(CURDIR)/bin/snowflake-* &> /dev/null
-	@docker image rm quay.io/yingzhuo/$(NAME):latest &> /dev/null || true
-	@docker image rm quay.io/yingzhuo/$(NAME):$(VERSION) &> /dev/null || true
+	@docker image rm registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):latest &> /dev/null || true
+	@docker image rm registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):$(VERSION) &> /dev/null || true
 	@docker image prune -f &> /dev/null || true
 
 protoc:
@@ -42,12 +42,12 @@ build-windows: protoc
 build-all: build-linux build-darwin build-windows
 
 release: build-linux
-	docker image build -t quay.io/yingzhuo/$(NAME):$(VERSION) --build-arg VERSION=$(VERSION) $(CURDIR)/bin
-	docker login --username=yingzhuo --password="${QUAY_PASSWORD}" quay.io &> /dev/null
-	docker image push quay.io/yingzhuo/$(NAME):$(VERSION)
-	docker image tag  quay.io/yingzhuo/$(NAME):$(VERSION) quay.io/yingzhuo/$(NAME):latest
-	docker image push quay.io/yingzhuo/$(NAME):latest
-	docker logout quay.io &> /dev/null
+	docker login --username=yingzhor@gmail.com --password="${ALIYUN_PASSWORD}" registry.cn-shanghai.aliyuncs.com
+	docker image build -t registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):$(VERSION) --build-arg VERSION=$(VERSION) $(CURDIR)/bin
+	docker image push registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):$(VERSION)
+	docker image tag  registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):$(VERSION) registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):latest
+	docker image push registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):latest
+	docker logout registry.cn-shanghai.aliyuncs.com &> /dev/null
 
 github: clean fmt
 	git add .

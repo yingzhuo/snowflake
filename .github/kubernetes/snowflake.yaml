@@ -28,7 +28,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: quay.io/yingzhuo/snowflake:latest
+          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake
           imagePullPolicy: Always
           ports:
             - name: http
@@ -63,7 +63,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: quay.io/yingzhuo/snowflake:latest
+          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake
           imagePullPolicy: Always
           ports:
             - name: http

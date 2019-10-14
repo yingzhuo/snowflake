@@ -1,6 +1,8 @@
 # Snowflake
 
-[![Docker Repository on Quay](https://quay.io/repository/yingzhuo/snowflake/status "Docker Repository on Quay")](https://quay.io/repository/yingzhuo/snowflake)
+```bash
+docker image pull registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
+```
 
 ### 安装
 

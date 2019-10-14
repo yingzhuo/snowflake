@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   snowflake:
-    image: quay.io/yingzhuo/snowflake:latest
+    image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest"
     container_name: "snowflake"
     restart: "always"
     ports:
