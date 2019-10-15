@@ -14,7 +14,7 @@ docker image pull registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
 ### 客户端
 
 * [Java](https://github.com/yingzhuo/snowflake-java-client)
-* [Golang](https://github.com/yingzhuo/snowflakeclient)
+* [Golang](https://github.com/yingzhuo/snowflake-golang-client)
 
 ### 参考
 
