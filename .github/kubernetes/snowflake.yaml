@@ -28,7 +28,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake
+          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
           imagePullPolicy: Always
           ports:
             - name: http
@@ -42,7 +42,7 @@ spec:
           command:
             - "snowflake"
             - "--node-id=100"
-            - "--response-type=protobuf"
+            - "--type=protobuf"
 ---
 
 apiVersion: apps/v1
@@ -63,7 +63,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake
+          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
           imagePullPolicy: Always
           ports:
             - name: http
@@ -77,7 +77,7 @@ spec:
           command:
             - "snowflake"
             - "--node-id=101"
-            - "--response-type=protobuf"
+            - "--type=protobuf"
 ---
 
 apiVersion: v1
