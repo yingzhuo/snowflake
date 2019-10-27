@@ -16,11 +16,11 @@ import (
 )
 
 type Flags struct {
-	Host   string
-	Port   int
-	NodeId int64
-	Type   string
-	Indent bool
+	Port      int
+	NodeId    int64
+	Type      string
+	Indent    bool
+	QuietMode bool
 }
 
 func main() {
@@ -35,25 +35,18 @@ func main() {
 	flags := &Flags{}
 
 	app := cli.NewApp()
-	app.Name = "snowflake"
 	app.Usage = "a http server of id-generator"
 	app.UsageText = "[options]"
 	app.Authors = "应卓 <yingzhor@gmail.com>"
 	app.Version = "1.0.1"
-	app.BuildInfo = &cli.BuildInfo{
-		Timestamp:   "",
-		GitBranch:   "",
-		GitCommit:   "",
-		GitRevCount: "",
-	}
+	app.BuildInfo = &cli.BuildInfo{}
+
+	app.Examples = `snowflake --port=8080 --node-id=512 --type=protobuf 
+snowflake --port=8080 --node-id=512 --type=json --indent
+`
+
 	app.Flags = []*cli.Flag{
 		{
-			Name:          "h, host",
-			Usage:         "host of http service",
-			DefValue:      "0.0.0.0",
-			NoOptDefValue: "0.0.0.0",
-			Value:         &flags.Host,
-		}, {
 			Name:          "p, port",
 			Usage:         "port of http service",
 			DefValue:      "8080",
@@ -79,6 +72,13 @@ func main() {
 			Hidden:        true,
 			IsBool:        true,
 			Value:         &flags.Indent,
+		}, {
+			Name:          "q, quiet",
+			Usage:         "quiet mode",
+			DefValue:      "false",
+			NoOptDefValue: "false",
+			IsBool:        true,
+			Value:         &flags.QuietMode,
 		},
 	}
 
@@ -90,11 +90,13 @@ func main() {
 }
 
 func doMain(flags *Flags) {
-	logrus.Infof("pid            = %v", os.Getpid())
-	logrus.Infof("host           = %v", flags.Host)
-	logrus.Infof("port           = %v", flags.Port)
-	logrus.Infof("node-id        = %v", flags.NodeId)
-	logrus.Infof("type           = %v", flags.Type)
+
+	if !flags.QuietMode {
+		logrus.Infof("pid            = %v", os.Getpid())
+		logrus.Infof("port           = %v", flags.Port)
+		logrus.Infof("node-id        = %v", flags.NodeId)
+		logrus.Infof("type           = %v", flags.Type)
+	}
 
 	startHttpServer(flags)
 }
@@ -129,7 +131,7 @@ func startHttpServer(flags *Flags) {
 	// path: "/healthz"
 	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {})
 
-	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", flags.Host, flags.Port), nil); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", flags.Port), nil); err != nil {
 		log.Print(err)
 		os.Exit(-1)
 	}

@@ -21,3 +21,4 @@ docker image pull registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
 * [https://github.com/bwmarrin/snowflake](https://github.com/bwmarrin/snowflake)
 * [https://github.com/golang/protobuf](https://github.com/golang/protobuf)
 * [https://github.com/sirupsen/logrus](https://github.com/sirupsen/logrus)
+* [https://github.com/subchen/go-cli](https://github.com/subchen/go-cli)
