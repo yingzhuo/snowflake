@@ -23,6 +23,15 @@ type Flags struct {
 	QuietMode bool
 }
 
+// build info
+var (
+	BuildVersion   string
+	BuildGitBranch string
+	BuildGitRev    string
+	BuildGitCommit string
+	BuildDate      string
+)
+
 func main() {
 
 	logrus.SetOutput(os.Stdout)
@@ -38,8 +47,13 @@ func main() {
 	app.Usage = "a http server of id-generator"
 	app.UsageText = "[options]"
 	app.Authors = "应卓 <yingzhor@gmail.com>"
-	app.Version = "1.0.1"
-	app.BuildInfo = &cli.BuildInfo{}
+	app.Version = BuildVersion
+	app.BuildInfo = &cli.BuildInfo{
+		GitBranch:   BuildGitBranch,
+		GitCommit:   BuildGitCommit,
+		GitRevCount: BuildGitRev,
+		Timestamp:   BuildDate,
+	}
 
 	app.Examples = `snowflake --port=8080 --node-id=512 --type=protobuf 
 snowflake --port=8080 --node-id=512 --type=json --indent
