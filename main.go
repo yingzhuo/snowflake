@@ -67,7 +67,6 @@ https://github.com/yingzhuo/snowflake-java-client`
 			Name:     "i, indent",
 			Usage:    "output indented json",
 			DefValue: "false",
-			Hidden:   true,
 			IsBool:   true,
 			Value:    &cnf.Global.Indent,
 		}, {
@@ -97,7 +96,13 @@ func doMain(context *cli.Context) {
 		logrus.Infof("type           = %v", cnf.GetType())
 	}
 
-	engine := gin.Default()
+	engine := gin.New()
+	engine.Use(gin.Recovery())
+
+	if !cnf.IsQuietMode() {
+		engine.Use(gin.Logger())
+	}
+
 	engine.GET("/healthz")
 	engine.GET("/id", mappings.GenId)
 
