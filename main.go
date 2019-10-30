@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -15,14 +16,6 @@ import (
 	"github.com/subchen/go-cli"
 )
 
-type Flags struct {
-	Port      int
-	NodeId    int64
-	Type      string
-	Indent    bool
-	QuietMode bool
-}
-
 // build info
 var (
 	BuildVersion   string
@@ -31,6 +24,8 @@ var (
 	BuildGitCommit string
 	BuildDate      string
 )
+
+var config = &Config{}
 
 func main() {
 
@@ -41,10 +36,8 @@ func main() {
 		FullTimestamp: true,
 	})
 
-	flags := &Flags{}
-
 	app := cli.NewApp()
-	app.Usage = "a http server of id-generator"
+	app.Usage = "a http server of snowflake id-generator"
 	app.UsageText = "[options]"
 	app.Authors = "应卓 <yingzhor@gmail.com>"
 	app.Version = BuildVersion
@@ -57,70 +50,81 @@ func main() {
 
 	app.Examples = `snowflake --port=8080 --node-id=512 --type=protobuf 
 snowflake --port=8080 --node-id=512 --type=json --indent
+snowflake --port=8080 --node-id=512 --type=json --indent --http-basic=root:root
 `
+	app.SeeAlso = `https://github.com/yingzhuo/snowflake
+https://github.com/yingzhuo/snowflake-golang-client
+https://github.com/yingzhuo/snowflake-java-client`
 
 	app.Flags = []*cli.Flag{
 		{
-			Name:          "p, port",
-			Usage:         "port of http service",
-			DefValue:      "8080",
-			NoOptDefValue: "8080",
-			Value:         &flags.Port,
+			Name:     "p, port",
+			Usage:    "port of http service",
+			DefValue: "8080",
+			Value:    &config.Port,
 		}, {
-			Name:          "n, node-id",
-			Usage:         "id of snowflake node (0 ~ 1023)",
-			DefValue:      "512",
-			NoOptDefValue: "512",
-			Value:         &flags.NodeId,
+			Name:     "n, node-id",
+			Usage:    "id of snowflake node (0 ~ 1023)",
+			DefValue: "512",
+			Value:    &config.NodeId,
 		}, {
-			Name:          "t, type",
-			Usage:         "type of http response (protobuf | json)",
-			DefValue:      "protobuf",
-			NoOptDefValue: "protobuf",
-			Value:         &flags.Type,
+			Name:     "t, type",
+			Usage:    "type of http response (protobuf | json)",
+			DefValue: "protobuf",
+			Value:    &config.Type,
 		}, {
-			Name:          "i, indent",
-			Usage:         "output indented json",
-			DefValue:      "false",
-			NoOptDefValue: "false",
-			Hidden:        true,
-			IsBool:        true,
-			Value:         &flags.Indent,
+			Name:     "i, indent",
+			Usage:    "output indented json",
+			DefValue: "false",
+			Hidden:   true,
+			IsBool:   true,
+			Value:    &config.Indent,
 		}, {
-			Name:          "q, quiet",
-			Usage:         "quiet mode",
-			DefValue:      "false",
-			NoOptDefValue: "false",
-			IsBool:        true,
-			Value:         &flags.QuietMode,
+			Name:     "q, quiet",
+			Usage:    "quiet mode",
+			DefValue: "false",
+			IsBool:   true,
+			Value:    &config.QuietMode,
+		}, {
+			Name:        "http-basic",
+			Usage:       "enable http basic",
+			Placeholder: "USERNAME:PASSWORD",
+			DefValue:    "",
+			Value:       &config.HttpBasic,
 		},
 	}
 
 	app.Action = func(context *cli.Context) {
-		doMain(flags)
+		doMain(config)
 	}
 
 	app.Run(os.Args)
 }
 
-func doMain(flags *Flags) {
+func doMain(config *Config) {
 
-	if !flags.QuietMode {
+	if !config.QuietMode {
 		logrus.Infof("pid            = %v", os.Getpid())
-		logrus.Infof("port           = %v", flags.Port)
-		logrus.Infof("node-id        = %v", flags.NodeId)
-		logrus.Infof("type           = %v", flags.Type)
+		logrus.Infof("port           = %v", config.Port)
+		logrus.Infof("node-id        = %v", config.NodeId)
+		logrus.Infof("type           = %v", config.Type)
 	}
 
-	startHttpServer(flags)
+	startHttpServer(config)
 }
 
-func startHttpServer(flags *Flags) {
+func startHttpServer(flags *Config) {
 
 	node, _ := snowflake.NewNode(flags.NodeId)
 
 	// path: "/id"
 	http.HandleFunc("/id", func(w http.ResponseWriter, r *http.Request) {
+
+		if !checkHttpBasic(config.HttpBasic, r.Header) {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
 		n, err := strconv.Atoi(r.FormValue("n"))
 		if err != nil || n < 1 {
 			n = 1
@@ -187,5 +191,34 @@ func writeProtobuf(w http.ResponseWriter, result []int64) {
 
 	if _, err := w.Write(data); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+func checkHttpBasic(basic HttpBasic, header http.Header) bool {
+
+	if !basic.IsEnabled() {
+		return true
+	}
+
+	headerValue := header.Get("Authorization")
+	if headerValue == "" {
+		return false
+	}
+
+	if !strings.HasPrefix(headerValue, "Basic ") {
+		return false
+	}
+
+	headerValue = headerValue[6:]
+
+	data, err := base64.URLEncoding.DecodeString(headerValue)
+	if err != nil {
+		return false
+	}
+
+	if usernameAndPassword := strings.Split(string(data), ":"); len(usernameAndPassword) != 2 {
+		return false
+	} else {
+		return basic.Matches(usernameAndPassword[0], usernameAndPassword[1])
 	}
 }

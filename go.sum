@@ -15,5 +15,7 @@ github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/subchen/go-cli v2.0.0+incompatible h1:8A2Y13R3ZcE5B7RO5TSKV5KwquwuUKB5jri5gmA9xlI=
 github.com/subchen/go-cli v2.0.0+incompatible/go.mod h1:XgWUJcEvZzeSp62+RgNZe61w19G/xIBVuQY9u2qpXmk=
+github.com/subchen/go-cli v2.0.3+incompatible h1:tYs2M2yt24nbNaGMeeSiTkajAen0vALVualScLJ5Qdc=
+github.com/subchen/go-cli v2.0.3+incompatible/go.mod h1:XgWUJcEvZzeSp62+RgNZe61w19G/xIBVuQY9u2qpXmk=
 golang.org/x/sys v0.0.0-20190422165155-953cdadca894 h1:Cz4ceDQGXuKRnVBDTS23GTn/pU5OE2C0WrNTOYK1Uuc=
 golang.org/x/sys v0.0.0-20190422165155-953cdadca894/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
