@@ -21,7 +21,7 @@ clean:
 	@docker image prune -f &> /dev/null || true
 
 protoc:
-	protoc -I=$(CURDIR)/_proto/ --go_out=$(CURDIR) $(CURDIR)/_proto/snowflake.proto
+	protoc -I=$(CURDIR)/proto/ --go_out=$(CURDIR)/proto $(CURDIR)/proto/snowflake.proto
 
 release: clean protoc
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o $(CURDIR)/_bin/$(NAME)-linux-amd64-$(VERSION)

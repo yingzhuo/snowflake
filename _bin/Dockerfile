@@ -10,6 +10,8 @@ COPY ./docker-entrypoint.sh /bin/docker-entrypoint
 
 RUN chmod +x /bin/docker-entrypoint
 
-ENV SNOWFLAKE_VERSION=$VERSION
+ENV \
+    SNOWFLAKE_VERSION=$VERSION \
+    GIN_MODE=release
 
 CMD ["docker-entrypoint"]
