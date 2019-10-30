@@ -41,9 +41,8 @@ func main() {
 	}
 
 	app.Examples = `snowflake --port=8080 --node-id=512 --type=protobuf 
-snowflake --port=8080 --node-id=512 --type=json --indent
-snowflake --port=8080 --node-id=512 --type=json --indent --http-basic=root:root
-`
+snowflake --port=8080 --node-id=512 --type=json --indent`
+
 	app.SeeAlso = `https://github.com/yingzhuo/snowflake
 https://github.com/yingzhuo/snowflake-golang-client
 https://github.com/yingzhuo/snowflake-java-client`

@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Port      int
 	NodeId    int64
-	Type      string
+	Type      Type
 	Indent    bool
 	QuietMode bool
 }
@@ -43,7 +43,7 @@ func GetNodeId() int64 {
 }
 
 func GetType() string {
-	return Global.Type
+	return Global.Type.String()
 }
 
 func IsIndentMode() bool {
@@ -51,9 +51,9 @@ func IsIndentMode() bool {
 }
 
 func IsJsonType() bool {
-	return strings.EqualFold("json", Global.Type)
+	return strings.EqualFold("json", GetType())
 }
 
 func IsProtobufType() bool {
-	return strings.EqualFold("protobuf", Global.Type)
+	return strings.EqualFold("protobuf", GetType())
 }
