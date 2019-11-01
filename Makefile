@@ -8,7 +8,7 @@ LDFLAGS		:= -s -w \
 			   -X 'main.BuildGitCommit=$(shell git rev-parse HEAD)' \
 			   -X 'main.BuildDate=$(shell /bin/date "+%F %T")'
 
-usage:
+no-default:
 	@echo "no default target"; false
 
 fmt:
@@ -37,4 +37,4 @@ github: clean fmt
 	git commit -m "$(TIMESTAMP)"
 	git push
 
-.PHONY: usage fmt clean protoc release github
+.PHONY: no-default fmt clean protoc release github

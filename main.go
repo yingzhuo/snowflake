@@ -75,6 +75,12 @@ https://github.com/yingzhuo/snowflake-java-client`
 			DefValue: "false",
 			IsBool:   true,
 			Value:    &cnf.Global.QuietMode,
+		}, {
+			Name:          "http-basic",
+			Usage:         "enable http-basic",
+			Placeholder:   "USERNAME:PASSWORD",
+			NoOptDefValue: "snowflake:snowflake",
+			Value:         &cnf.Global.UsernamePassword,
 		},
 	}
 
@@ -98,13 +104,15 @@ func doMain(context *cli.Context) {
 
 	engine := gin.New()
 	engine.Use(gin.Recovery())
-
 	if !cnf.IsQuietMode() {
 		engine.Use(gin.Logger())
 	}
 
+	engine.GET("/id", gin.BasicAuth(gin.Accounts{
+		cnf.Global.UsernamePassword.Username: cnf.Global.UsernamePassword.Password,
+	}), mappings.GenId)
+
 	engine.GET("/healthz")
-	engine.GET("/id", mappings.GenId)
 
 	if err := engine.Run(cnf.GetHttpAddr()); err != nil {
 		panic(err)

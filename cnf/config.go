@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Port      int
-	NodeId    int64
-	Type      Type
-	Indent    bool
-	QuietMode bool
+	Port             int
+	NodeId           int64
+	Type             Type
+	Indent           bool
+	QuietMode        bool
+	UsernamePassword UsernamePassword
 }
 
 var Global = &Config{}

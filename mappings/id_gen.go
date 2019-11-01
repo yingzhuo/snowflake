@@ -1,6 +1,7 @@
 package mappings
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,9 @@ import (
 )
 
 func GenId(c *gin.Context) {
+
+	user := c.MustGet(gin.AuthUserKey).(string)
+	fmt.Println(user)
 
 	form := &idForm{}
 	c.ShouldBindQuery(form)
