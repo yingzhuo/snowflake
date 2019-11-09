@@ -3,12 +3,26 @@ package cnf
 import (
 	"errors"
 	"strings"
+
+	"github.com/bwmarrin/snowflake"
 )
+
+var (
+	NodeId       int64
+	ResponseType Type
+	Port         int
+	Indent       bool
+	QuietMode    bool
+)
+
+var SnowflakeNode *snowflake.Node
 
 const (
 	Json     Type = "json"
 	Protobuf Type = "protobuf"
 )
+
+// -----------------
 
 type Type string
 
@@ -29,4 +43,12 @@ func (t *Type) Set(value string) error {
 		return nil
 	}
 	return errors.New(`fatal: flag type must be a option of "json" or "protobuf"`)
+}
+
+func (t *Type) IsJson() bool {
+	return strings.EqualFold(string(*t), string(Json))
+}
+
+func (t *Type) IsProtobuf() bool {
+	return strings.EqualFold(string(*t), string(Protobuf))
 }

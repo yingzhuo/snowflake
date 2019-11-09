@@ -1,7 +1,6 @@
 package mappings
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,9 +9,6 @@ import (
 )
 
 func GenId(c *gin.Context) {
-
-	user := c.MustGet(gin.AuthUserKey).(string)
-	fmt.Println(user)
 
 	form := &idForm{}
 	c.ShouldBindQuery(form)
@@ -23,15 +19,13 @@ func GenId(c *gin.Context) {
 		result = append(result, id.Int64())
 	}
 
-	if cnf.IsJsonType() {
-		if cnf.IsIndentMode() {
+	if cnf.ResponseType.IsJson() {
+		if cnf.Indent {
 			c.IndentedJSON(http.StatusOK, result)
 		} else {
 			c.JSON(http.StatusOK, result)
 		}
-	}
-
-	if cnf.IsProtobufType() {
+	} else {
 		message := proto.IdList{
 			Ids: []int64{},
 		}

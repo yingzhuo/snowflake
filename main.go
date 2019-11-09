@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/subchen/go-cli"
+	"github.com/yingzhuo/go-cli/v2"
 	"github.com/yingzhuo/snowflake/cnf"
 	"github.com/yingzhuo/snowflake/mappings"
 )
@@ -52,69 +54,62 @@ https://github.com/yingzhuo/snowflake-java-client`
 			Name:     "p, port",
 			Usage:    "port of http service",
 			DefValue: "8080",
-			Value:    &cnf.Global.Port,
+			Value:    &cnf.Port,
 		}, {
 			Name:     "n, node-id",
 			Usage:    "id of snowflake node (0 ~ 1023)",
 			DefValue: "512",
-			Value:    &cnf.Global.NodeId,
+			Value:    &cnf.NodeId,
 		}, {
 			Name:     "t, type",
 			Usage:    "type of http response (protobuf | json)",
 			DefValue: "protobuf",
-			Value:    &cnf.Global.Type,
+			Value:    &cnf.ResponseType,
 		}, {
 			Name:     "i, indent",
 			Usage:    "output indented json",
 			DefValue: "false",
 			IsBool:   true,
-			Value:    &cnf.Global.Indent,
+			Value:    &cnf.Indent,
 		}, {
 			Name:     "q, quiet",
 			Usage:    "quiet mode",
 			DefValue: "false",
 			IsBool:   true,
-			Value:    &cnf.Global.QuietMode,
-		}, {
-			Name:          "http-basic",
-			Usage:         "enable http-basic",
-			Placeholder:   "USERNAME:PASSWORD",
-			NoOptDefValue: "snowflake:snowflake",
-			Value:         &cnf.Global.UsernamePassword,
+			Value:    &cnf.QuietMode,
 		},
 	}
 
-	app.Action = func(context *cli.Context) {
-		doMain(context)
+	app.OnAppInitialized = func(_ *cli.Context) {
+		cnf.SnowflakeNode, _ = snowflake.NewNode(cnf.NodeId)
+	}
+
+	app.Action = func(c *cli.Context) {
+		doMain(c)
 	}
 
 	app.Run(os.Args)
 }
 
-func doMain(context *cli.Context) {
+func doMain(_ *cli.Context) {
 
-	cnf.Initialize() // 初始化所有全局变量
-
-	if cnf.IsNotQuietMode() {
+	if !cnf.QuietMode {
 		logrus.Infof("pid            = %v", os.Getpid())
-		logrus.Infof("port           = %v", cnf.GetHttpPort())
-		logrus.Infof("node-id        = %v", cnf.GetNodeId())
-		logrus.Infof("type           = %v", cnf.GetType())
+		logrus.Infof("port           = %v", cnf.Port)
+		logrus.Infof("node-id        = %v", cnf.NodeId)
+		logrus.Infof("type           = %v", cnf.ResponseType)
 	}
 
 	engine := gin.New()
 	engine.Use(gin.Recovery())
-	if !cnf.IsQuietMode() {
+	if !cnf.QuietMode {
 		engine.Use(gin.Logger())
 	}
 
-	engine.GET("/id", gin.BasicAuth(gin.Accounts{
-		cnf.Global.UsernamePassword.Username: cnf.Global.UsernamePassword.Password,
-	}), mappings.GenId)
-
+	engine.GET("/id", mappings.GenId)
 	engine.GET("/healthz")
 
-	if err := engine.Run(cnf.GetHttpAddr()); err != nil {
+	if err := engine.Run(fmt.Sprintf("0.0.0.0:%d", cnf.Port)); err != nil {
 		panic(err)
 	}
 }
