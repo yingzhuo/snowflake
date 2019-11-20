@@ -1,4 +1,4 @@
-FROM busybox:1.28.4
+FROM busybox:1.31.1
 
 MAINTAINER 应卓 yingzhor@gmail.com
 
