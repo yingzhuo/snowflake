@@ -6,12 +6,12 @@ ARG VERSION
 
 COPY ./snowflake-linux-amd64-$VERSION /bin/snowflake
 
-COPY ./docker-entrypoint.sh /bin/docker-entrypoint
-
-RUN chmod +x /bin/docker-entrypoint
-
-ENV \
-    SNOWFLAKE_VERSION=$VERSION \
+ENV SNOWFLAKE_VERSION=$VERSION \
+    SNOWFLAKE_PORT=8080 \
+    SNOWFLAKE_NODE_ID=512 \
+    SNOWFLAKE_TYPE=protobuf \
+    SNOWFLAKE_INDENT=false \
+    SNOWFLAKE_QUIET=false \
     GIN_MODE=release
 
-CMD ["docker-entrypoint"]
+CMD ["snowflake"]

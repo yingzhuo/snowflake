@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
@@ -40,6 +41,7 @@ func main() {
 		GitCommit:   BuildGitCommit,
 		GitRevCount: BuildGitRev,
 		Timestamp:   BuildDate,
+		BuiltBy:     "make",
 	}
 
 	app.Examples = `snowflake --port=8080 --node-id=512 --type=protobuf 
@@ -53,27 +55,33 @@ https://github.com/yingzhuo/snowflake-java-client`
 		{
 			Name:     "p, port",
 			Usage:    "port of http service",
+			EnvVar:   "SNOWFLAKE_PORT",
 			DefValue: "8080",
 			Value:    &cnf.Port,
 		}, {
 			Name:     "n, node-id",
 			Usage:    "id of snowflake node (0 ~ 1023)",
-			DefValue: "512",
+			EnvVar:   "SNOWFLAKE_NODE_ID",
+			DefValue: "0",
 			Value:    &cnf.NodeId,
 		}, {
 			Name:     "t, type",
 			Usage:    "type of http response (protobuf | json)",
+			EnvVar:   "SNOWFLAKE_TYPE",
 			DefValue: "protobuf",
 			Value:    &cnf.ResponseType,
 		}, {
-			Name:     "i, indent",
-			Usage:    "output indented json",
-			DefValue: "false",
-			IsBool:   true,
-			Value:    &cnf.Indent,
+			Name:          "i, indent",
+			Usage:         "output indented json",
+			EnvVar:        "SNOWFLAKE_INDENT",
+			DefValue:      "true",
+			NoOptDefValue: "true",
+			IsBool:        true,
+			Value:         &cnf.Indent,
 		}, {
 			Name:     "q, quiet",
 			Usage:    "quiet mode",
+			EnvVar:   "SNOWFLAKE_QUIET",
 			DefValue: "false",
 			IsBool:   true,
 			Value:    &cnf.QuietMode,
@@ -98,6 +106,9 @@ func doMain(_ *cli.Context) {
 		logrus.Infof("port           = %v", cnf.Port)
 		logrus.Infof("node-id        = %v", cnf.NodeId)
 		logrus.Infof("type           = %v", cnf.ResponseType)
+		if strings.EqualFold("json", cnf.ResponseType.String()) {
+			logrus.Infof("indent         = %v", cnf.Indent)
+		}
 	}
 
 	engine := gin.New()

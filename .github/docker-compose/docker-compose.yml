@@ -7,7 +7,6 @@ services:
     restart: "always"
     ports:
       - "8080:8080"
-    command:
-      - "docker-entrypoint"
-      - "--node-id=0"
-      - "--type=json"
+    environment:
+      - "SNOWFLAKE_TYPE=json"
+      - "SNOWFLAKE_INDENT=yes"
