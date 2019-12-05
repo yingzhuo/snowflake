@@ -10,4 +10,4 @@ services:
     command:
       - "docker-entrypoint"
       - "--node-id=0"
-      - "--response-type=protobuf"
+      - "--type=json"

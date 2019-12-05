@@ -11,6 +11,23 @@ docker image pull registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
 * [docker-compose](.github/wiki/install-dco.md)
 * [kubernetes](.github/wiki/install-kubernetes.md)
 
+如果你愿意用`systemctl`管理之，你可以参考如下的`snowflake.service`
+
+```
+[Unit]
+Description=Snowflake ID generator
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/snowflake/bin/snowflake --type=json --indent --port=15656 --node-id=512
+KillMode=mixed
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ### 客户端
 
 * [Java](https://github.com/yingzhuo/snowflake-java-client)
