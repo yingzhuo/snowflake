@@ -7,11 +7,14 @@ version: "3.7"
 
 services:
   snowflake:
-    image: quay.io/yingzhuo/snowflake:latest
+    image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest"
     container_name: "snowflake"
-    restart: "no"
+    restart: "always"
     ports:
       - "8080:8080"
+    environment:
+      - "SNOWFLAKE_TYPE=json"
+      - "SNOWFLAKE_INDENT=yes"
 ```
 
 ```
