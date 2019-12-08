@@ -28,21 +28,24 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
+          image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest"
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
           readinessProbe:
-            initialDelaySeconds: 5
+            initialDelaySeconds: 3
             httpGet:
-              port: http
-              path: "/healthz"
+              port: 8080
+              path: "/ping"
               scheme: HTTP
           command:
-            - "snowflake"
-            - "--node-id=100"
-            - "--type=protobuf"
+            - snowflake
+            - --http-port=8080
+            - --node-id=0
+            - --type=protobuf
+            - --indent=true
+            - --quiet=false
 ---
 
 apiVersion: apps/v1
@@ -63,21 +66,24 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
+          image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest"
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
           readinessProbe:
-            initialDelaySeconds: 5
+            initialDelaySeconds: 3
             httpGet:
-              port: http
-              path: "/healthz"
+              port: 8080
+              path: "/ping"
               scheme: HTTP
           command:
-            - "snowflake"
-            - "--node-id=101"
-            - "--type=protobuf"
+            - snowflake
+            - --http-port=8080
+            - --node-id=1
+            - --type=protobuf
+            - --indent=true
+            - --quiet=false
 ---
 
 apiVersion: v1

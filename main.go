@@ -1,3 +1,12 @@
+/*
+*	 ____  _   _  _____        _______ _        _    _  _______
+*	/ ___|| \ | |/ _ \ \      / /  ___| |      / \  | |/ / ____|
+*	\___ \|  \| | | | \ \ /\ / /| |_  | |     / _ \ | ' /|  _|
+*	 ___) | |\  | |_| |\ V  V / |  _| | |___ / ___ \| . \| |___
+*	|____/|_| \_|\___/  \_/\_/  |_|   |_____/_/   \_\_|\_\_____|
+*
+*  https://github.com/yingzhuo/snowflake
+ */
 package main
 
 import (
@@ -6,17 +15,14 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/golang/protobuf/proto"
-	"github.com/sirupsen/logrus"
 	"github.com/yingzhuo/go-cli/v2"
 	"github.com/yingzhuo/snowflake/cnf"
 	"github.com/yingzhuo/snowflake/protomsg"
 )
 
-// build info
 var (
 	BuildVersion   string = "latest"
 	BuildGitBranch string
@@ -27,16 +33,9 @@ var (
 
 func main() {
 
-	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetFormatter(&logrus.TextFormatter{
-		DisableColors: false,
-		FullTimestamp: true,
-	})
-
 	app := cli.NewApp()
 	app.Name = "snowflake"
-	app.Usage = "a http server of snowflake id-generator"
+	app.Usage = "http server of snowflake id-generator"
 	app.UsageText = "[options]"
 	app.Authors = "应卓 <yingzhor@gmail.com>"
 	app.Version = BuildVersion
@@ -45,11 +44,10 @@ func main() {
 		GitCommit:   BuildGitCommit,
 		GitRevCount: BuildGitRev,
 		Timestamp:   BuildDate,
-		BuiltBy:     "make",
 	}
 
-	app.Examples = `snowflake --port=8080 --node-id=512 --type=protobuf 
-snowflake --port=8080 --node-id=512 --type=json --indent`
+	app.Examples = `snowflake --http-port=8080 --node-id=512 --type=protobuf 
+snowflake --http-port=8080 --node-id=512 --type=json --indent`
 
 	app.SeeAlso = `https://github.com/yingzhuo/snowflake
 https://github.com/yingzhuo/snowflake-golang-client
@@ -57,17 +55,17 @@ https://github.com/yingzhuo/snowflake-java-client`
 
 	app.Flags = []*cli.Flag{
 		{
-			Name:     "p, port",
-			Usage:    "port of http service",
-			EnvVar:   "SNOWFLAKE_PORT",
-			DefValue: "8080",
-			Value:    &cnf.Port,
-		}, {
 			Name:     "n, node-id",
 			Usage:    "id of snowflake node (0 ~ 1023)",
 			EnvVar:   "SNOWFLAKE_NODE_ID",
 			DefValue: "0",
 			Value:    &cnf.NodeId,
+		}, {
+			Name:     "p, http-port",
+			Usage:    "port of http service",
+			EnvVar:   "SNOWFLAKE_HTTP_PORT",
+			DefValue: "8080",
+			Value:    &cnf.Port,
 		}, {
 			Name:     "t, type",
 			Usage:    "type of http response (protobuf | json)",
@@ -98,21 +96,20 @@ https://github.com/yingzhuo/snowflake-java-client`
 
 	app.Action = func(c *cli.Context) {
 		if !cnf.QuietMode {
-			logrus.Infof("pid            = %v", os.Getpid())
-			logrus.Infof("port           = %v", cnf.Port)
-			logrus.Infof("node-id        = %v", cnf.NodeId)
-			logrus.Infof("type           = %v", cnf.ResponseType)
-			if strings.EqualFold("json", cnf.ResponseType.String()) {
-				logrus.Infof("indent         = %v", cnf.Indent)
-			}
+			fmt.Printf("pid        = %v\n", os.Getpid())
+			fmt.Printf("http-port  = %v\n", cnf.Port)
+			fmt.Printf("node-id    = %v\n", cnf.NodeId)
+			fmt.Printf("type       = %v\n", cnf.ResponseType)
+			fmt.Printf("indent     = %v\n", cnf.Indent)
 		}
 
-		http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
-			writer.WriteHeader(200)
-			writer.Write([]byte("pong"))
+		http.HandleFunc("/ping", func(w http.ResponseWriter, _ *http.Request) {
+			w.Header().Set("Content-Type", "text/plain;charset=utf-8")
+			w.WriteHeader(200)
+			w.Write([]byte("pong"))
 		})
 
-		http.HandleFunc("/id", func(writer http.ResponseWriter, request *http.Request) {
+		http.HandleFunc("/id", func(w http.ResponseWriter, request *http.Request) {
 			n := 1
 			vs := request.FormValue("n")
 			n, _ = strconv.Atoi(vs)
@@ -128,13 +125,13 @@ https://github.com/yingzhuo/snowflake-java-client`
 			}
 
 			if cnf.ResponseType == cnf.Json {
-				writeJson(result, writer, cnf.Indent)
+				writeJson(result, w, cnf.Indent)
 			} else {
 				message := protomsg.IdList{
 					Ids: []int64{},
 				}
 				message.Ids = append(message.Ids, result...)
-				writeProtobuf(&message, writer)
+				writeProtobuf(&message, w)
 			}
 		})
 

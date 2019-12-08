@@ -9,6 +9,7 @@ LDFLAGS		:= -s -w \
 			   -X 'main.BuildDate=$(shell /bin/date "+%F %T")'
 fmt:
 	@go fmt $(CURDIR)/...
+	@go mod tidy
 
 clean:
 	@rm -rf $(CURDIR)/_bin/snowflake-* &> /dev/null
