@@ -11,7 +11,6 @@ ENV SNOWFLAKE_VERSION=$VERSION \
     SNOWFLAKE_NODE_ID=0 \
     SNOWFLAKE_TYPE=protobuf \
     SNOWFLAKE_INDENT=false \
-    SNOWFLAKE_QUIET=false \
-    GIN_MODE=release
+    SNOWFLAKE_QUIET=false
 
 CMD ["snowflake"]

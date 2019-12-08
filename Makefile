@@ -7,10 +7,6 @@ LDFLAGS		:= -s -w \
 			   -X 'main.BuildGitRev=$(shell git rev-list --count HEAD)' \
 			   -X 'main.BuildGitCommit=$(shell git rev-parse HEAD)' \
 			   -X 'main.BuildDate=$(shell /bin/date "+%F %T")'
-
-no-default:
-	@echo "no default target"; false
-
 fmt:
 	@go fmt $(CURDIR)/...
 
@@ -21,7 +17,13 @@ clean:
 	@docker image prune -f &> /dev/null || true
 
 protoc:
-	protoc -I=$(CURDIR)/proto/ --go_out=$(CURDIR)/proto $(CURDIR)/proto/snowflake.proto
+	protoc -I=$(CURDIR)/protomsg/ --go_out=$(CURDIR)/protomsg $(CURDIR)/protomsg/snowflake.proto
+
+install:
+	@CGO_ENABLED=0 sudo go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o /usr/local/bin/$(NAME)
+
+uninstall:
+	@sudo rm -rf /usr/local/bin/$(NAME) &> /dev/null || true
 
 release: clean protoc
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o $(CURDIR)/_bin/$(NAME)-linux-amd64-$(VERSION)
@@ -37,4 +39,4 @@ github: clean fmt
 	git commit -m "$(TIMESTAMP)"
 	git push
 
-.PHONY: no-default fmt clean protoc release github
+.PHONY: fmt clean protoc release github install uninstall
