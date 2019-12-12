@@ -26,7 +26,12 @@ install:
 uninstall:
 	@sudo rm -rf /usr/local/bin/$(NAME) &> /dev/null || true
 
-release: clean protoc
+build: protoc
+	CGO_ENABLED=0 GOOS=linux   GOARCH=amd64 go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o $(CURDIR)/_bin/$(NAME)-linux-amd64-$(VERSION)
+	CGO_ENABLED=0 GOOS=darwin  GOARCH=amd64 go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o $(CURDIR)/_bin/$(NAME)-linux-macos-$(VERSION)
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o $(CURDIR)/_bin/$(NAME)-linux-windows-$(VERSION).exe
+
+docker-release: clean protoc
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags "$(LDFLAGS)" -o $(CURDIR)/_bin/$(NAME)-linux-amd64-$(VERSION)
 	docker login --username=yingzhor@gmail.com --password="${ALIYUN_PASSWORD}" registry.cn-shanghai.aliyuncs.com
 	docker image build -t registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):$(VERSION) --build-arg VERSION=$(VERSION) --no-cache $(CURDIR)/_bin
@@ -35,9 +40,13 @@ release: clean protoc
 	docker image push registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):latest
 	docker logout registry.cn-shanghai.aliyuncs.com &> /dev/null
 
+docker-clean:
+	docker image rm -f registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):$(VERSION) &> /dev/null
+	docker image rm -f registry.cn-shanghai.aliyuncs.com/yingzhor/$(NAME):latest &> /dev/null
+
 github: clean fmt
 	git add .
 	git commit -m "$(TIMESTAMP)"
 	git push
 
-.PHONY: fmt clean protoc release github install uninstall
+.PHONY: fmt clean protoc github build install uninstall docker-release docker-clean
