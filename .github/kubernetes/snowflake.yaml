@@ -99,8 +99,9 @@ metadata:
 spec:
   selector:
     app: snowflake
-  type: ClusterIP
+  type: NodePort
   ports:
     - name: http
       port: 8080
       targetPort: 8080
+      nodePort: 11111
