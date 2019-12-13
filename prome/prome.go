@@ -14,17 +14,17 @@ import (
 )
 
 var (
-	IdCreatedCounter *prometheus.CounterVec
-)
-
-func init() {
-	IdCreatedCounter = prometheus.NewCounterVec(
+	IdCreatedCounter prometheus.Counter = prometheus.NewCounter(
 		prometheus.CounterOpts{
 			Name: "id_created",
 			Help: "Number of uuid created.",
+			ConstLabels: prometheus.Labels{
+				"app": "snowflake",
+			},
 		},
-		[]string{"app"},
 	)
+)
 
+func init() {
 	prometheus.MustRegister(IdCreatedCounter)
 }
