@@ -18,8 +18,11 @@ import (
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/golang/protobuf/proto"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yingzhuo/go-cli/v2"
 	"github.com/yingzhuo/snowflake/cnf"
+	"github.com/yingzhuo/snowflake/prome"
 	"github.com/yingzhuo/snowflake/protomsg"
 )
 
@@ -121,6 +124,7 @@ https://github.com/yingzhuo/snowflake-java-client`
 			var result = make([]int64, 0)
 			for i := 0; i < n; i++ {
 				id := cnf.SnowflakeNode.Generate()
+				prome.IdCreatedCounter.With(prometheus.Labels{"app": "snowflake"}).Inc()
 				result = append(result, id.Int64())
 			}
 
@@ -134,6 +138,8 @@ https://github.com/yingzhuo/snowflake-java-client`
 				writeProtobuf(&message, w)
 			}
 		})
+
+		http.Handle("/metrics", promhttp.Handler())
 
 		http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", cnf.Port), nil)
 	}
