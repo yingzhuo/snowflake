@@ -12,16 +12,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/yingzhuo/snowflake/prome"
 	"net/http"
 	"os"
 	"strconv"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/golang/protobuf/proto"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/yingzhuo/go-cli/v2"
 	"github.com/yingzhuo/snowflake/cnf"
+	"github.com/yingzhuo/snowflake/prome"
 	"github.com/yingzhuo/snowflake/protomsg"
 )
 
@@ -94,6 +95,19 @@ https://github.com/yingzhuo/snowflake-java-client`
 
 	app.OnAppInitialized = func(_ *cli.Context) {
 		cnf.SnowflakeNode, _ = snowflake.NewNode(cnf.NodeId)
+
+		prome.IdCreatedCounter = prometheus.NewCounter(
+			prometheus.CounterOpts{
+				Name: "id_created",
+				Help: "Number of uuid created.",
+				ConstLabels: prometheus.Labels{
+					"app":    "snowflake",
+					"nodeId": fmt.Sprintf("%v", cnf.NodeId),
+				},
+			},
+		)
+
+		prometheus.MustRegister(prome.IdCreatedCounter)
 	}
 
 	app.Action = func(c *cli.Context) {
