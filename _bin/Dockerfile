@@ -15,4 +15,4 @@ ENV SNOWFLAKE_VERSION=$VERSION \
 
 EXPOSE 8080
 
-CMD ["snowflake"]
+CMD ["/bin/snowflake"]
