@@ -63,7 +63,9 @@ func init() {
 	proto.RegisterType((*IdList)(nil), "snowflake.IdList")
 }
 
-func init() { proto.RegisterFile("snowflake.proto", fileDescriptor_aaa8bfc3cc8f3970) }
+func init() {
+	proto.RegisterFile("snowflake.proto", fileDescriptor_aaa8bfc3cc8f3970)
+}
 
 var fileDescriptor_aaa8bfc3cc8f3970 = []byte{
 	// 84 bytes of a gzipped FileDescriptorProto

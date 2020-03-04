@@ -1,13 +1,10 @@
 FROM busybox:1.31.1
 
-MAINTAINER 应卓 yingzhor@gmail.com
+LABEL maintainer="应卓 yingzhor@gmail.com"
 
-ARG VERSION
+COPY ./snowflake-linux-amd64-* /bin/snowflake
 
-COPY ./snowflake-linux-amd64-$VERSION /bin/snowflake
-
-ENV SNOWFLAKE_VERSION=$VERSION \
-    SNOWFLAKE_NODE_ID=0 \
+ENV SNOWFLAKE_NODE_ID=0 \
     SNOWFLAKE_HTTP_PORT=8080 \
     SNOWFLAKE_TYPE=protobuf \
     SNOWFLAKE_INDENT=false \
@@ -15,4 +12,4 @@ ENV SNOWFLAKE_VERSION=$VERSION \
 
 EXPOSE 8080
 
-CMD ["/bin/snowflake"]
+CMD ["snowflake"]
