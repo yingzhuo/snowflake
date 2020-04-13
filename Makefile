@@ -1,6 +1,6 @@
 TIMESTAMP   := $(shell /bin/date "+%F %T")
 NAME		:= snowflake
-VERSION		:= 1.0.3
+VERSION		:= 1.0.4
 LDFLAGS		:= -s -w \
 			   -X 'main.BuildVersion=$(VERSION)' \
 			   -X 'main.BuildGitBranch=$(shell git describe --all)' \
