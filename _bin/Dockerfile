@@ -1,6 +1,6 @@
 FROM busybox:1.31.1
 
-LABEL maintainer="应卓 yingzhor@gmail.com"
+LABEL maintainer="应卓 <yingzhor@gmail.com>"
 
 COPY ./snowflake-linux-amd64-* /bin/snowflake
 
