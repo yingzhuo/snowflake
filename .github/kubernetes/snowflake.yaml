@@ -40,6 +40,10 @@ spec:
           env:
             - name: SNOWFLAKE_NODE_ID
               value: "0"
+            - name: SNOWFLAKE_TYPE
+              value: "json"
+            - name: SNOWFLAKE_INDENT
+              value: "true"
 ---
 
 apiVersion: apps/v1

@@ -7,6 +7,10 @@ LDFLAGS		:= -s -w \
 			   -X 'main.BuildGitRev=$(shell git rev-list --count HEAD)' \
 			   -X 'main.BuildGitCommit=$(shell git rev-parse HEAD)' \
 			   -X 'main.BuildDate=$(shell /bin/date "+%F %T")'
+
+no_default:
+	@echo "no default target"
+
 fmt:
 	@go fmt $(CURDIR)/...
 	@go mod tidy
