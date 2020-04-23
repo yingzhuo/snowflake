@@ -6,6 +6,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: snowflake
+  annotations:
+    istio-injection: enabled
 ---
 
 apiVersion: apps/v1
@@ -26,7 +28,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest"
+          image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake"
           imagePullPolicy: Always
           ports:
             - name: http
@@ -64,7 +66,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: snowflake
-          image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest"
+          image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake"
           imagePullPolicy: Always
           ports:
             - name: http
@@ -78,6 +80,10 @@ spec:
           env:
             - name: SNOWFLAKE_NODE_ID
               value: "1"
+            - name: SNOWFLAKE_TYPE
+              value: "json"
+            - name: SNOWFLAKE_INDENT
+              value: "true"
 ---
 
 apiVersion: v1
@@ -98,3 +104,21 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
+---
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: snowflake
+  namespace: snowflake
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: snowflake.k8s.io
+      http:
+        paths:
+          - backend:
+              serviceName: snowflake
+              servicePort: 8080

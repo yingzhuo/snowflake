@@ -48,7 +48,3 @@ WantedBy=multi-user.target
 * [https://github.com/golang/protobuf](https://github.com/golang/protobuf)
 * [https://github.com/sirupsen/logrus](https://github.com/sirupsen/logrus)
 * [https://github.com/prometheus/client_golang](https://github.com/prometheus/client_golang)
-
-### 版本更新记录
-
-* 点击[这里](./CHANGELOG.md)
