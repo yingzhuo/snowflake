@@ -1,7 +1,7 @@
 syntax = "proto3";
 package snowflake;
 
-option go_package = "protomsg";
+option go_package = ".;protomsg";
 
 message IdList {
     repeated int64 ids = 1;
