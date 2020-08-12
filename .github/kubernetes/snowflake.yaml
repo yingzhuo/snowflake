@@ -6,8 +6,6 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: snowflake
-  annotations:
-    istio-injection: enabled
 ---
 
 apiVersion: apps/v1
@@ -33,19 +31,11 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-          readinessProbe:
-            initialDelaySeconds: 3
-            httpGet:
-              scheme: HTTP
-              port: 8080
-              path: "/ping"
           env:
             - name: SNOWFLAKE_NODE_ID
               value: "0"
-            - name: SNOWFLAKE_TYPE
-              value: "json"
             - name: SNOWFLAKE_INDENT
-              value: "true"
+              value: "false"
 ---
 
 apiVersion: apps/v1
@@ -71,19 +61,11 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-          readinessProbe:
-            initialDelaySeconds: 3
-            httpGet:
-              scheme: HTTP
-              port: 8080
-              path: "/ping"
           env:
             - name: SNOWFLAKE_NODE_ID
               value: "1"
-            - name: SNOWFLAKE_TYPE
-              value: "json"
             - name: SNOWFLAKE_INDENT
-              value: "true"
+              value: "false"
 ---
 
 apiVersion: v1
@@ -91,11 +73,6 @@ kind: Service
 metadata:
   name: snowflake
   namespace: snowflake
-  annotations:
-    com.github.yingzhuo/created-by: "yingzhuo"
-    prometheus.io/scrape: "true"
-    prometheus.io/path: "/metrics"
-    prometheus.io/port: "8080"
 spec:
   selector:
     app: snowflake
@@ -104,21 +81,3 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
----
-
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: snowflake
-  namespace: snowflake
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-    - host: snowflake.k8s.io
-      http:
-        paths:
-          - backend:
-              serviceName: snowflake
-              servicePort: 8080

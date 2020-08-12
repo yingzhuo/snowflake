@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   snowflake:
-    image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake"
+    image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:1.1.0"
     container_name: "snowflake"
     restart: "always"
     ports:
@@ -10,5 +10,4 @@ services:
     environment:
       - "SNOWFLAKE_NODE_ID=0"
       - "SNOWFLAKE_HTTP_PORT=8080"
-      - "SNOWFLAKE_TYPE=json"
-      - "SNOWFLAKE_INDENT=true"
+      - "SNOWFLAKE_INDENT=false"
