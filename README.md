@@ -8,8 +8,8 @@ docker image pull registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
 
 推荐使用`docker-compose`或`kubernetes`运行本服务。
 
-* [docker-compose](.github/wiki/install-dco.md)
-* [kubernetes](.github/wiki/install-kubernetes.md)
+* [docker-compose](.github/docker-compose.yaml)
+* [kubernetes](.github/kubernetes.md)
 
 ### 使用
 
