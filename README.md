@@ -9,7 +9,7 @@ docker image pull registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:latest
 推荐使用`docker-compose`或`kubernetes`运行本服务。
 
 * [docker-compose](.github/docker-compose.yaml)
-* [kubernetes](.github/kubernetes.md)
+* [kubernetes](.github/kubernetes.yaml)
 
 ### 使用
 
