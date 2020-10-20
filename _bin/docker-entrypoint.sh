@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/bin/sh -e
 
-gosu snowflake:snowflake /bin/snowflake
+exec gosu app:app snowflake
