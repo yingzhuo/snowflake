@@ -1,8 +1,8 @@
-version: "3.7"
+version: "3.9"
 
 services:
   snowflake:
-    image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake:1.1.0"
+    image: "registry.cn-shanghai.aliyuncs.com/yingzhor/snowflake"
     container_name: "snowflake"
     restart: "always"
     ports:
