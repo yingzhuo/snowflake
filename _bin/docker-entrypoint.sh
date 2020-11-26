@@ -1,3 +1,3 @@
 #!/bin/sh -e
 
-exec gosu app:app snowflake
+exec gosu app:app /opt/snowflake
