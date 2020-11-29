@@ -1,0 +1,19 @@
+[Unit]
+Description=Snowflake server
+Documentation=https://github.com/yingzhuo/snowflake
+Requires=network.target
+After=network.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+Environment="SNOWFLAKE_NODE_ID=0"
+Environment="SNOWFLAKE_HTTP_PORT=19991"
+Environment="SNOWFLAKE_INDENT=false"
+Environment="SNOWFLAKE_QUIET=false"
+ExecStart=/opt/snowflake/snowflake
+KillSignal=15
+
+[Install]
+WantedBy=multi-user.target
